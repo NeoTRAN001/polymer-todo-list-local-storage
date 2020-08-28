@@ -1,0 +1,99 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="./header-todo.html">
+<link rel="import" href="./add-todo.html">
+<link rel="import" href="./list-todo.html">
+
+<dom-module id="polymer-todo-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      .container {
+        width: 50%;
+        margin: auto;
+      }
+    </style>
+    <header-todo></header-todo>
+
+    <div class="container">
+      <add-todo></add-todo>
+      <list-todo id="listtodo" list="[[ list ]]" exists="[[ exists ]]"></list-todo>
+    </div>
+  </template>
+
+  <script>/**
+ * @customElement
+ * @polymer
+ */
+class PolymerTodoApp extends Polymer.Element {
+  static get is() {
+    return 'polymer-todo-app';
+  }
+
+  static get properties() {
+    return {
+      todoList: {
+        type: Array,
+        value: []
+      }
+    };
+  }
+
+  ready() {
+    super.ready();
+
+    if (localStorage.getItem("ToDoListStorage") && localStorage.getItem("ToDoListStorage") != '[]') {
+      this.todoList = JSON.parse(localStorage.getItem("ToDoListStorage"));
+      this.exists = true;
+      this.updateToDoList();
+    }
+
+    this.addEventListener('AddToDo', e => {
+      this.addToDoInList(e.detail.content);
+    });
+    this.addEventListener('DeleteToDo', e => {
+      this.deleteToDoInList(e.detail.type, e.detail.id);
+    });
+  }
+
+  addToDoInList(content) {
+    this.todoList.push({
+      content: content,
+      id: this.todoList.length
+    });
+    this.exists = true;
+    this.updateToDoList();
+  }
+
+  deleteToDoInList(type, idToDo) {
+    if (type) {
+      this.todoList = [];
+      this.exists = false;
+    } else {
+      let idTemp = null;
+      this.todoList.forEach((aToDo, id) => {
+        if (aToDo['id'] == idToDo) idTemp = id;
+      });
+      this.todoList.splice(idTemp, 1);
+
+      if (this.todoList.length < 1) {
+        this.exists = false;
+        this.todoList = [];
+      }
+    }
+
+    this.updateToDoList();
+  }
+
+  updateToDoList() {
+    this.list = [];
+    this.list = this.todoList;
+    localStorage.setItem("ToDoListStorage", JSON.stringify(this.todoList));
+  }
+
+}
+
+window.customElements.define(PolymerTodoApp.is, PolymerTodoApp);</script>
+</dom-module>

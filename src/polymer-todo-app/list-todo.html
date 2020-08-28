@@ -1,0 +1,143 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<dom-module id="list-todo">
+    <template>
+        <style>
+          :host {
+            display: block;
+          }
+
+          .imgRequired {
+              width: 25px;
+          }
+
+          paper-card {
+            --paper-card-header-text: {
+                background-color: #9adc3b;
+            }
+            
+            --paper-card: {
+                width: 100%;
+            }
+          }
+
+          .headerCard {
+            display: grid;
+            grid-template-columns: 87% 13%;
+            --paper-card-content: {
+                background-color: #9adc3b;
+            }
+          }
+
+          .aToDo {
+            display: grid;
+            grid-template-columns: 95% 5%;
+          }
+
+          .text-content {
+            hyphens: auto;
+          }
+
+          .buttonDelete {
+            border: 2px solid rgb(182, 41, 41);
+            border-radius: 40px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            color: white;
+            background-color: rgb(182, 41, 41);
+            margin-top: 1em;
+          }
+        </style>
+
+    <paper-card>
+        <div class="card-content headerCard">
+            <p>ToDo List by Polymer 2</p>
+            <paper-button on-click="deleteAllToDo"><img class="imgRequired" src="https://raw.githubusercontent.com/NeoTRAN001/polymer-todo-list-local-storage/master/img/reBin.png" alt=""></paper-button>
+        </div>
+        <div class="card-content">
+          <template is="dom-if" if="{{ !exists }}">
+            <paper-card>
+              <div class="card-content aToDo">
+                  <p class="text-content">No hay ningún ToDo</p>
+              </div>
+            </paper-card>
+          </template>
+          <template is="dom-if" if="{{ exists }}">
+
+            <template is="dom-repeat" items="{{ list }}">
+              <paper-card>
+                <div class="card-content aToDo">
+                    <p class="text-content"> [[ item.content ]]</p>
+                    <button class="buttonDelete" value="[[ item.id ]]" on-click="deleteToDo">
+                      X
+                    </button>
+                </div>
+              </paper-card>
+            </template>
+
+          </template>
+        </div>
+    </paper-card>
+  
+    <paper-toast id="toast" text="[[ action ]]"></paper-toast>
+
+    </template>
+
+    <script>
+        class ListToDo extends Polymer.Element {
+          static get is() { return 'list-todo'; }
+
+          static get properties() {
+            return {
+              action: {
+                type: String,
+                value: ''
+              },
+              exists: {
+                type: Boolean,
+                value: false,
+                notify: true
+              },
+              list: {
+                type: Array,
+                value: [],
+                notify: true
+              }
+            };
+          }
+
+          deleteToDo(e) {
+            let idToDo = e.target.value;
+
+            if(idToDo != null && idToDo != "undefined") {
+              this.DeleteToDoListEvent(false, idToDo);
+              this.openToast('Se han eliminado el ToDo');
+            }
+          }
+
+          deleteAllToDo() {
+            this.DeleteToDoListEvent(true, null);
+            this.openToast('Se han eliminado todos los ToDo');
+          }
+
+          DeleteToDoListEvent(all, id) {
+            this.dispatchEvent(new CustomEvent('DeleteToDo', {
+                detail: { type: all, id: id }, 
+                bubbles: true, 
+                composed: true
+            }));
+          }
+
+          openToast(text) {
+            this.action = text;
+            this.$.toast.open();
+          }
+        }
+    
+        window.customElements.define(ListToDo.is, ListToDo);
+    </script>
+</dom-module>

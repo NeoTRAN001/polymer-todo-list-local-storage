@@ -1,0 +1,33 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="header-todo">
+    <template>
+      <style>
+        :host {
+          display: block;
+        }
+
+        h2 {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+        }
+
+        img {
+            width: 100px;
+        }
+      </style>
+      
+      <center>
+        <img src="https://raw.githubusercontent.com/NeoTRAN001/polymer-todo-list-local-storage/master/img/ico-logo.png" alt="">
+        <h2>FrontEnd Test Polymer</h2>
+      </center>
+    </template>
+  
+    <script>
+      class HeaderToDo extends Polymer.Element {
+        static get is() { return 'header-todo'; }
+      }
+  
+      window.customElements.define(HeaderToDo.is, HeaderToDo);
+    </script>
+</dom-module>  

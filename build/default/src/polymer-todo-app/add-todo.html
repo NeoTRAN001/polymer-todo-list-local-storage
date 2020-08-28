@@ -1,0 +1,69 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+
+<dom-module id="add-todo">
+    <template>
+      <style>
+        :host {
+          display: block;
+        }
+
+        paper-button {
+            --paper-button: {
+                color: white;
+                background-color: #33ac6d;
+                margin-top: 9px;
+                width: 96px;
+                height: 45px;
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 85% 15%;
+        }
+      </style>
+
+      <div class="grid">
+        <paper-input id="inputToDo" label=":D"></paper-input>
+        <paper-button on-click="sendValue" raised="" class="indigo">Agregar</paper-button>
+      </div>
+
+      <paper-toast id="toast" text="El ToDo se ha agregado correctamente"></paper-toast>
+    </template>
+  
+    <script>class AddToDo extends Polymer.Element {
+  static get is() {
+    return 'add-todo';
+  }
+
+  sendValue() {
+    let valueInput = this.$.inputToDo.value;
+
+    if (valueInput != '') {
+      this.addToDoListEvent(valueInput);
+      this.openToast();
+      this.$.inputToDo.value = '';
+    }
+  }
+
+  openToast() {
+    this.$.toast.open();
+  }
+
+  addToDoListEvent(toDo) {
+    this.dispatchEvent(new CustomEvent('AddToDo', {
+      detail: {
+        content: toDo
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+}
+
+window.customElements.define(AddToDo.is, AddToDo);</script>
+</dom-module>  
