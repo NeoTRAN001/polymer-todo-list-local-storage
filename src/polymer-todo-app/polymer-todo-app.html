@@ -53,7 +53,13 @@
       }
 
       addToDoInList(content) {
-        this.todoList.push({ content: content, id: this.todoList.length });
+        
+        let newId = -1;
+
+        if(this.todoList.length > 0)
+          this.todoList.forEach( aToDo => { if(aToDo['id'] > newId) newId = aToDo['id']; });
+
+        this.todoList.push({ content: content, id: newId + 1 });
         this.exists = true;
         this.updateToDoList();
       }
